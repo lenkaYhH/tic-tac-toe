@@ -30,7 +30,7 @@ function reset_board_visually() {
 
     // start game setup
     WIN_COUNTERel.innerHTML = `Wins: ${localStorage.getItem('wins-counter')}`;
-    STATUSel.innerHTML = `${PLAYER_NAME[CUR_PLAYER]}'s turn`;
+    STATUSel.innerHTML = `${PLAYER_NAME[CUR_PLAYER]} starts!`;
 }
 
 function set_boxes_clickable() {
@@ -52,7 +52,14 @@ function reset() {
 }
 
 function box_clicked(box_index) {
-    
+    // player clicks the box
+
+    place_player(box_index, 1);
+
+    // updates computational values
+    BOARD[Math.floor(box_index/3)][box_index%3] = 1;
+
+    next_player();
 }
 
 function place_player(box_index, player) {
@@ -65,10 +72,16 @@ function place_player(box_index, player) {
 
 function next_player() {
     // updates the current player to the next player
+    // updates info text
+
     if (CUR_PLAYER === 1) {
         CUR_PLAYER = 0;
+
+        STATUSel.innerHTML = "Computer thinking...";
+
     } else {
         CUR_PLAYER = 1;
+        STATUSel.innerHTML = "Your turn!";
     }
 }
 
@@ -114,15 +127,44 @@ function compute_winner(board) {
 
 }
 
+function game_ends(board) {
+    // returns true if game is finished, false otherwise
+    if (compute_winner !== null) {
+        return true
+    } 
+
+    // checks if the whole board is already full
+    full_rows = 0;
+
+    for (let row=0; row<3; row++) {
+        full_col = 0;
+
+        for (let col=0; col<3; col++) {
+
+            if (board[row][col] !== null) {
+                full_col += 1;
+            }
+        }
+
+        full_rows += Math.floor(full_col/3);
+    }
+
+    return full_rows === 3
+}
+
 // LET THE GAME BEGIN!!!! ------------------------------
 
 // while there is no winner
-while (compute_winner(BOARD) === null) {
+while (game_ends(BOARD) === false) {
 
-    // player turn
+    if (CUR_PLAYER === 1) {
+        // player turn
 
-    // computer turn
 
+    } else {
+        // computer turn
+
+    }
 
 }
 
