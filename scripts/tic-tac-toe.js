@@ -8,11 +8,7 @@ let STATUSel = document.getElementById("status");
 let CUR_PLAYER = Math.floor(Math.random()*2); /* generates a random number either player 0 or player 1 */
 const PLAYER_NAME = ['computer', 'player'];
 
-let BOARD = [
-    [null, null, null],
-    [null, null, null],
-    [null, null, null]
-]
+let BOARD = [null, null, null, null, null, null, null, null, null];
 
 // ON STARTUP --------------------------------------------
 
@@ -79,7 +75,7 @@ function place_player(box_index, player) {
 
     // updates the computating board
 
-    BOARD[Math.floor(box_index/3)][box_index%3] = player;
+    BOARD[box_index] = player;
 
 }
 
@@ -108,11 +104,7 @@ function next_player() {
 
 // COMPUTATION --------------------------------------- 
 function reset_computations() {
-    BOARD = [
-        [null, null, null],
-        [null, null, null],
-        [null, null, null]
-    ]
+    BOARD = [null, null, null, null, null, null, null, null, null];
 
     CUR_PLAYER = Math.floor(Math.random()*2); /* generates a random number either player 0 or player 1 */
 }
@@ -124,23 +116,26 @@ function compute_winner(board) {
         // thank gods 0 === null is false lol
 
         // tests the horizontal
-        if (board[i][0] !== null && board[i][0] == board[i][1] && board[i][1] == board[i][2]) {
-            return board[i][0];
+        // 0 1 2, 3 4 5, 6 7 8
+        if (board[3*i] !== null && board[3*i] == board[3*i+1] && board[3*i+1] == board[3*i+2]) {
+            return board[3*i];
         }
 
         // tests the vertical
-        if (board[0][i] !== null && board[0][i] == board[1][i] && board[1][i] == board[2][i]) {
-            return board[0][i];
+        // 0 3 6, 1 4 7, 2 5 8
+        if (board[i] !== null && board[i] == board[3+i] && board[3+i] == board[6+i]) {
+            return board[i];
         }
     }
 
     // tests the diagonals
-    if (board[1][1] !== null && board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
+    // 0 4 8 or 2 4 6
+    if (board[0] !== null && board[0] == board[4] && board[4] == board[8]) {
 
-        return board[1][1];
+        return board[4];
 
-    } else if (board[1][1] !== null && board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
-        return board[1][1];
+    } else if (board[2] !== null && board[2] == board[4] && board[4] == board[6]) {
+        return board[4];
     }
 
     // last case: no winner
@@ -155,21 +150,15 @@ function game_ends(board) {
     } 
 
     // checks if the whole board is already full
-    full_rows = 0;
+    full = 0;
 
-    for (let row=0; row<3; row++) {
-        full_col = 0;
-
-        for (let col=0; col<3; col++) {
-
-            if (board[row][col] !== null) {
-                full_col += 1;
-            }
+    for (let i=0; i<9; i++) {
+        if (board[i] !== null) {
+            full += 1;
         }
-
-        full_rows += Math.floor(full_col/3);
     }
-    return full_rows === 3
+
+    return full === 9;
 }
 
 function return_all_valid_moves(board) {
@@ -177,13 +166,12 @@ function return_all_valid_moves(board) {
 
     valid_moves = [];
 
-    for (let r=0; r<3; r++) {
+    for (let i=0; i<9; i++) {
 
-        for (let c=0; c<3; c++) {
-            if (board[r][c] === null) {
-                valid_moves.push(r*3+c);
-            }
+        if (board[i] === null) {
+            valid_moves.push(i);
         }
+        
     }
 
     return valid_moves
@@ -226,6 +214,28 @@ function finish() {
         STATUSel.innerHTML = `You tied!`;
     }
 }
+
+// FANCY SMART COMPUTER STUFF (yes the ones that take a long time) ------------------------------------------------
+// function result(board, move_coord) {
+//     // returns the board state after making move (i, j)
+// }
+
+// function utility(board) {
+//     // returns 1 if player 1 won the game, 0 for none and -1 for player 0
+// }
+
+// function minimax(board, player) {
+//     // returns the optimal action for the player
+// }
+
+// function max_value(board) {
+
+// }
+
+// function min_value(board) {
+
+// }
+
 
 // LET THE GAME BEGIN!!!! --------------------------------------
 
