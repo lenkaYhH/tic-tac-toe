@@ -5,7 +5,7 @@ let WIN_COUNTERel = document.getElementById("win-counter");
 let STATUSel = document.getElementById("status");
 
 // for computational purposes
-let CUR_PLAYER = Math.floor(Math.random()*2); /* generates a random number either player 0 or player 1 */
+let CUR_PLAYER;
 const PLAYER_NAME = ['computer', 'player'];
 
 let BOARD = [null, null, null, null, null, null, null, null, null];
@@ -46,6 +46,11 @@ function remove_boxes_clickable() {
 // GENERAL FUNCTIONS ------------------------------
 function reset() {
     console.log("GAME RESET...")
+
+    CUR_PLAYER = Math.floor(Math.random()*2); /* generates a random number either player 0 or player 1 */
+    console.log(`Starting player: ${PLAYER_NAME[CUR_PLAYER]}`);
+    // console.log(`CUR PLAYER: ${CUR_PLAYER}`);
+
     reset_board_visually();
     reset_computations();
 
@@ -181,10 +186,12 @@ function computer_move() {
     // turns off player clicking
     remove_boxes_clickable();
 
-    // for now does random moves
-    valid_moves = return_all_valid_moves(BOARD);
+    // doing random moves
+    // valid_moves = return_all_valid_moves(BOARD);
+    // let move = valid_moves[0]; 
 
-    let move = valid_moves[0]; 
+    // smart computer :)
+    let move = minimax(BOARD, 0);
 
     place_player(move, 0);
     next_player();
@@ -216,26 +223,122 @@ function finish() {
 }
 
 // FANCY SMART COMPUTER STUFF (yes the ones that take a long time) ------------------------------------------------
-// function result(board, move_coord) {
-//     // returns the board state after making move (i, j)
-// }
+function result(board, move, player) {
+    // returns the board state after making move
 
-// function utility(board) {
-//     // returns 1 if player 1 won the game, 0 for none and -1 for player 0
-// }
+    // makes a DEEP copy of the board (avoids changing original); ... only workds for 1D arrays!
+    let new_board = [...board];
 
-// function minimax(board, player) {
-//     // returns the optimal action for the player
-// }
+    new_board[move] = player;
 
-// function max_value(board) {
+    return new_board;
+}
 
-// }
+function utility(board) {
+    // returns 1 if player 1 (human) won the game, 0 for none and -1 for player 0 (computer)
 
-// function min_value(board) {
+    // ik this function feels kinda useless but trust me it's so essential to the calculations (and keeping it neat)
+    if (compute_winner(board) === 0) {
+        return -1;
 
-// }
+    } else if (compute_winner(board) === 1) {
+        return 1;
 
+    } else {
+        return 0;
+
+    }
+}
+
+// where the magic happens --------------------------
+
+function minimax(board, player) {
+    // returns the optimal action for the player
+    console.log("running through all the possibilities...");
+
+    let optimal_action;
+
+    // computer wants the points to be as little/as negative as possibke while humans' best moves are when it gives them the largest positive score
+    if (player === 0) {
+        val = 100000000;
+
+        valid_actions = return_all_valid_moves(board);
+
+        for (let i=0; i<valid_actions.length; i++) {
+
+            let m = max_value(result(board, valid_actions[i]))
+
+            if (m <= val) {
+                optimal_action = valid_actions[i];
+                val = m;
+            } 
+
+        }
+
+    } else {
+
+        val = -100000000;
+
+        valid_actions = return_all_valid_moves(board);
+
+        for (let i=0; i<valid_actions.length; i++) {
+
+            let m = min_value(result(board, valid_actions[i]))
+
+            if (m >= val) {
+                optimal_action = valid_actions[i];
+                val = m;
+            } 
+
+        }
+    }
+
+    console.log(`best move found as: ${optimal_action} with ${val}`);
+    return optimal_action;
+
+}
+
+// the funky recursion stuff (may bugs never find this place) ---------------------------
+// basically what these functions do is that they run through all the possible moves
+// each function here "models" a player, one tries to maximize the score as much as possible and another tries to minimize it
+// these following functions, for each possible move, calls on the other function and tries to see which move gives the best score for themselves
+
+function max_value(board) {
+
+    // if the game has ended, give the points on which player wins
+    if (game_ends(board)) {
+        return utility(board)
+    }
+
+    // if there is no winner yet, run thru the possibilities
+    let v = -10000;
+
+    let valid_actions = return_all_valid_moves(board);
+
+    for (let i=0; i<valid_actions.length; i++) {
+        v = Math.max(v, min_value(result(board, valid_actions[i])));
+    }
+    
+    return v
+
+}
+
+function min_value(board) {
+
+    if (game_ends(board)) {
+        return utility(board);
+    }
+
+    let v = 10000;
+
+    let valid_actions = return_all_valid_moves(board);
+
+    for (let i=0; i<valid_actions.length; i++) {
+        v = Math.min(v, max_value(result(board, valid_actions[i])));
+    }
+    
+    return v
+}
 
 // LET THE GAME BEGIN!!!! --------------------------------------
 
