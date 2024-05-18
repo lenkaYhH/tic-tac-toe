@@ -16,7 +16,7 @@
     margin: 20px;
 }
 
-p {
+main p {
     color: var(--theme-bl);
 
     &#win-counter {
