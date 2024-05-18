@@ -9,6 +9,32 @@ let CUR_PLAYER;
 
 let BOARD = [null, null, null, null, null, null, null, null, null];
 
+// for the player icons, number of image options is how many there are to choose from
+// whichever ends up being the index 0 item is the image that the computer is going to get
+// index 1 is the player image
+
+// IMPORTING IMAGES UNDER THE TIC-TAC-TOE FILE LOOKS NICEST IF IT'S A SQUARE IMAGE OR ELSE IT GETS SQUISHED
+// ONLY JPG FILES or else code gets messy (aka errors)
+let X_O = []
+const NUM_IMG_OPTIONS = 8;
+
+// deciding each player's image (by random)
+function choose_player_img() {
+    X_O = [];
+
+    X_O.push(Math.floor(Math.random() * NUM_IMG_OPTIONS));
+
+    let x = Math.floor(Math.random() * NUM_IMG_OPTIONS);
+
+    // ensuring the two player's icons don't overlap
+    while (x === X_O[0]) {
+        x = Math.floor(Math.random()*NUM_IMG_OPTIONS);
+    }
+
+    X_O.push(x);
+
+}
+
 // ON STARTUP --------------------------------------------
 
 // sets wins in local storage to 0 if it doesn't exist yet
@@ -56,6 +82,7 @@ function reset() {
 
     reset_board_visually();
     reset_computations();
+    choose_player_img();
 
     if (CUR_PLAYER === 1) {
         player_move();
@@ -80,7 +107,12 @@ function box_clicked(box_index) {
 function place_player(box_index, player) {
     // visuall updates the board
     // BOXESel[box_index].innerHTML = `${player}`;
-    BOXESel[box_index].innerHTML = `<img src="/images/tic-tac-toe/player${player}.jpg">`;
+
+    if (player == -1) {
+        BOXESel[box_index].innerHTML = `<img src="/images/tic-tac-toe/player${X_O[0]}.jpg">`;
+    } else {
+        BOXESel[box_index].innerHTML = `<img src="/images/tic-tac-toe/player${X_O[1]}.jpg">`;
+    }
 
     // updates the computating board
     BOARD[box_index] = player;
@@ -113,8 +145,6 @@ function next_player() {
 // COMPUTATION --------------------------------------- 
 function reset_computations() {
     BOARD = [null, null, null, null, null, null, null, null, null];
-
-    CUR_PLAYER = (-1) ** Math.floor(Math.random()*3); /* generates a random number either player -1 or player 1 */
 }
 
 function compute_winner(board) {
