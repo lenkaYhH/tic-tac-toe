@@ -74,3 +74,10 @@ p {
     }
 }
 
+@media screen and (max-width: 550px) {
+    #board{
+        grid-template: repeat(3, 100px) / repeat(3, 100px);
+        grid-gap: 10px;
+        margin: 10px auto;
+    }
+}

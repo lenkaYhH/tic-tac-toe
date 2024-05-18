@@ -76,8 +76,9 @@ function box_clicked(box_index) {
 
 function place_player(box_index, player) {
     // visuall updates the board
-    // BOXESel[box_index].innerHTML = `<img src="/images/tic-tac-toe/player${player}.jpg">`;
-    BOXESel[box_index].innerHTML = `${player}`;
+    // BOXESel[box_index].innerHTML = `${player}`;
+    BOXESel[box_index].innerHTML = `<img src="/images/tic-tac-toe/player${player}.jpg">`;
+
 
     // updates the computating board
 
