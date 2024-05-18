@@ -6,7 +6,6 @@ let STATUSel = document.getElementById("status");
 
 // for computational purposes
 let CUR_PLAYER;
-const PLAYER_NAME = ['computer', 'player'];
 
 let BOARD = [null, null, null, null, null, null, null, null, null];
 
@@ -26,7 +25,13 @@ function reset_board_visually() {
 
     // start game setup
     WIN_COUNTERel.innerHTML = `Wins: ${localStorage.getItem('win-counter')}`;
-    STATUSel.innerHTML = `${PLAYER_NAME[CUR_PLAYER]} starts!`;
+
+    if (CUR_PLAYER === 1) {
+        STATUSel.innerHTML = `You start!`;
+
+    } else {
+        STATUSel.innerHTML = `Computer starts!`;
+    }
 }
 
 function set_boxes_clickable() {
@@ -48,8 +53,6 @@ function reset() {
     console.log("GAME RESET...")
 
     CUR_PLAYER = (-1) ** Math.floor(Math.random()*3); /* generates a random number either player -1 or player 1 */
-    console.log(`Starting player: ${CUR_PLAYER}`);
-    // console.log(`CUR PLAYER: ${CUR_PLAYER}`);
 
     reset_board_visually();
     reset_computations();
@@ -95,6 +98,7 @@ function next_player() {
 
         if (CUR_PLAYER === 1) {
             CUR_PLAYER = -1;
+            STATUSel.innerHTML = "Computer thinking...";
             computer_move();
 
         } else {
@@ -152,7 +156,7 @@ function game_ends(board) {
     } 
 
     // checks if the whole board is already full
-    full = 0;
+    let full = 0;
 
     for (let i=0; i<9; i++) {
         if (board[i] !== null) {
@@ -202,19 +206,24 @@ function player_move() {
 }
 
 function finish() {
+    console.log("GAME FINISHED");
     // remove boxes clickable
     remove_boxes_clickable();
     
     winner = compute_winner(BOARD);
     if (game_ends(BOARD) === true && winner !== null) {
-        STATUSel.innerHTML = `${winner} wins!!`;
 
-        // update local storage values if player wins
+        // if player wins
         if (winner === 1) {
+            STATUSel.innerHTML = `You win!`;
+            // update local storage
             localStorage.setItem('win-counter', parseInt(localStorage.getItem('win-counter'))+1);
+
+        } else {
+            STATUSel.innerHTML = 'Computer wins!!';
         }
 
-    } else if (game_ends(BOARD) === true && winner !== null) {
+    } else if (game_ends(BOARD) === true) {
         STATUSel.innerHTML = `You tied!`;
     }
 }
@@ -248,14 +257,12 @@ function utility(board) {
 
 function minimax(board, player) {
     // returns the optimal action for the player
-    console.log("running through all the possibilities...");
 
     let optimal_action;
     let val;
 
     // computer wants the points to be as little/as negative as possibke while humans' best moves are when it gives them the largest positive score
     if (player === -1) {
-        console.log("part 1")
        val = 100000000;
 
         // valid_actions = return_all_valid_moves(board);
@@ -265,7 +272,6 @@ function minimax(board, player) {
             let m = max_value(result(board, action, -1))
 
             if (m <= val) {
-                console.log(`Optimal action changed to ${action} with val ${m}`);
                 optimal_action = action;
                 val = m;
             } 
@@ -273,18 +279,13 @@ function minimax(board, player) {
         }
 
     } else {
-        console.log("here");
-
         val = -100000000;
-
-        // valid_actions = return_all_valid_moves(board);
 
         for (let action of return_all_valid_moves(board)) {
 
             let m = min_value(result(board, action, 1))
 
             if (m >= val) {
-                console.log(`Optimal action changed to ${action} with val ${m}`);
                 optimal_action = action;
                 val = m;
             } 
@@ -315,13 +316,6 @@ function max_value(board) {
     let va = return_all_valid_moves(board);
 
     for (let i=0; i<va.length; i++) {
-        
-        if (va[i] === undefined) {
-            console.log(i);
-            console.log(va);
-            alert("undefined!")
-        }
-
         v = Math.max(v, min_value(result(board, va[i], 1)));
     }
     
@@ -340,12 +334,6 @@ function min_value(board) {
     let va = return_all_valid_moves(board);
 
     for (let i=0; i<va.length; i++) {
-        if (va[i] === undefined) {
-            console.log(i);
-            console.log(va);
-            alert("undefined!")
-        }
-        
         v = Math.min(v, max_value(result(board, va[i], -1)));
     }
     
