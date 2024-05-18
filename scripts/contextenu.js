@@ -11,7 +11,7 @@ function getHighlightedText() {
 
 function copyHighlightedText() {
     var text = "";
-    if (window.getSelection) {
+    if (window.getSelection()) {
       text = window.getSelection().toString();
     } else if (document.selection && document.selection.type != "Control") {
       text = document.selection.createRange().text;
@@ -22,7 +22,7 @@ function copyHighlightedText() {
 
 function highlightQuery() {
     var text = "";
-    if (window.getSelection) {
+    if (window.getSelection()) {
       text = window.getSelection().toString();
     } else if (document.selection && document.selection.type != "Control") {
       text = document.selection.createRange().text;
@@ -70,12 +70,18 @@ window.addEventListener('click', (e) => {
     let highlight = ""
     highlight = getHighlightedText()
     if (highlight == "") {
-        try {
-          let removed_child = document.getElementById("funcs").removeChild(document.getElementById("temp"))
-          removed_child = document.getElementById("funcs").removeChild(document.getElementById("temp")) 
-        } catch (error) {
-          // irrelevant
-        };
-        highlight = ""
+
+      // instead of trying to manually catch the error, test if temp id exists, if it does, remove it (or else nothing happens)
+      //(if temp doesn't exist, getElementById will return null which is false)
+      if (document.getElementById("temp")) {
+        let removed_child = document.getElementById("funcs").removeChild(document.getElementById("temp"));
+      }
+        // try {
+        //   let removed_child = document.getElementById("funcs").removeChild(document.getElementById("temp"))
+        //   removed_child = document.getElementById("funcs").removeChild(document.getElementById("temp")) 
+        // } catch (error) {
+        //   // irrelevant
+        // };
+        // highlight = ""
     }
 })

@@ -79,11 +79,8 @@ function place_player(box_index, player) {
     // BOXESel[box_index].innerHTML = `${player}`;
     BOXESel[box_index].innerHTML = `<img src="/images/tic-tac-toe/player${player}.jpg">`;
 
-
     // updates the computating board
-
     BOARD[box_index] = player;
-
 }
 
 function next_player() {
@@ -173,13 +170,12 @@ function return_all_valid_moves(board) {
 
     for (let i=0; i<9; i++) {
 
-        if (board[i] === null) {
+        if (board[i] === null || board[i] === undefined) {
             valid_moves.push(i);
         }
         
     }
 
-    console.log()
     return valid_moves
 }
 
@@ -188,11 +184,11 @@ function computer_move() {
     remove_boxes_clickable();
 
     // doing random moves
-    valid_moves = return_all_valid_moves(BOARD);
-    let move = valid_moves[Math.floor(Math.random() * valid_moves.length)]; 
+    // valid_moves = return_all_valid_moves(BOARD);
+    // let move = valid_moves[Math.floor(Math.random() * valid_moves.length)]; 
 
     // smart computer :)
-    // let move = minimax(BOARD, -1);
+    let move = minimax(BOARD, -1);
 
     place_player(move, -1);
     next_player();
@@ -264,7 +260,7 @@ function minimax(board, player) {
 
         // valid_actions = return_all_valid_moves(board);
 
-        for (let action in return_all_valid_moves(board)) {
+        for (let action of return_all_valid_moves(board)) {
 
             let m = max_value(result(board, action))
 
@@ -283,7 +279,7 @@ function minimax(board, player) {
 
         // valid_actions = return_all_valid_moves(board);
 
-        for (let action in return_all_valid_moves(board)) {
+        for (let action of return_all_valid_moves(board)) {
 
             let m = min_value(result(board, action))
 
