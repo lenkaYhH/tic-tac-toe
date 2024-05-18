@@ -170,7 +170,7 @@ function return_all_valid_moves(board) {
 
     for (let i=0; i<9; i++) {
 
-        if (board[i] === null || board[i] === undefined) {
+        if (board[i] === null) {
             valid_moves.push(i);
         }
         
@@ -225,7 +225,7 @@ function result(board, move, player) {
 
     // makes a DEEP copy of the board (avoids changing original); ... only workds for 1D arrays!
     // let new_board = JSON.parse(JSON.stringify(board));
-    new_board = [...board];
+    let new_board = [...board];
 
     new_board[move] = player;
 
@@ -262,7 +262,7 @@ function minimax(board, player) {
 
         for (let action of return_all_valid_moves(board)) {
 
-            let m = max_value(result(board, action))
+            let m = max_value(result(board, action, -1))
 
             if (m <= val) {
                 console.log(`Optimal action changed to ${action} with val ${m}`);
@@ -281,7 +281,7 @@ function minimax(board, player) {
 
         for (let action of return_all_valid_moves(board)) {
 
-            let m = min_value(result(board, action))
+            let m = min_value(result(board, action, 1))
 
             if (m >= val) {
                 console.log(`Optimal action changed to ${action} with val ${m}`);
@@ -322,7 +322,7 @@ function max_value(board) {
             alert("undefined!")
         }
 
-        v = Math.max(v, min_value(result(board, va[i])));
+        v = Math.max(v, min_value(result(board, va[i], 1)));
     }
     
     return v
@@ -346,7 +346,7 @@ function min_value(board) {
             alert("undefined!")
         }
         
-        v = Math.min(v, max_value(result(board, va[i])));
+        v = Math.min(v, max_value(result(board, va[i], -1)));
     }
     
     return v
